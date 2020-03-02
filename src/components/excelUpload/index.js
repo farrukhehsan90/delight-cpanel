@@ -12,6 +12,7 @@ class ExcelUpload extends React.Component {
             found: [],
             notFound: [],
             alreadyUpdated: [],
+            wrongNumber: [],
             disableUpdate: false,
             loadingUsers: true
         }
@@ -34,6 +35,7 @@ class ExcelUpload extends React.Component {
         ele.target.value = "";
     }
     fileUpload = (event) => {
+        this.setState({disableUpdate: false})
         readXlsxFile(event.target.files[0]).then((rows) => {
             rows.shift();
             let foundArr = [];
@@ -46,11 +48,15 @@ class ExcelUpload extends React.Component {
                     if ("attributes" in attributes) {
                         attributes = attributes["attributes"];
                     }
-                    if (attributes["custom:civilIdNumber"] === val[0].toString()
-                        && attributes["phone_number"].includes(val[1].toString())
-                    ) {
-                        foundOne = { id: u, isSignedUp: u.isSignedUp, phone_number: attributes["phone_number"], civilIdNumber: attributes["custom:civilIdNumber"] }
-                        return true;
+                    if (attributes["phone_number"].includes(val[1].toString()))
+                    {
+                        if (attributes["custom:civilIdNumber"] === val[0].toString()) {
+                            foundOne = { id: u, wrongNumber: false, isSignedUp: u.isSignedUp, phone_number: attributes["phone_number"], civilIdNumber: attributes["custom:civilIdNumber"] }
+                            return true;
+                        } else {
+                            foundOne = { id: u, wrongNumber: true, isSignedUp: u.isSignedUp, phone_number: attributes["phone_number"], civilIdNumber: attributes["custom:civilIdNumber"] }
+                            return true;
+                        }
                     }
                 })
                 if (obj) {
@@ -63,8 +69,10 @@ class ExcelUpload extends React.Component {
                 } else {
                     notFoundArr.push({ civilIdNumber: val[0], phone_number: val[1] })
                 }
-            })
-            this.setState({ found: foundArr, notFound: notFoundArr, alreadyUpdated });
+            });
+            let wrongNumber = foundArr.filter(val => val.wrongNumber);
+            foundArr = foundArr.filter(val => !val.wrongNumber);
+            this.setState({ found: foundArr, notFound: notFoundArr, alreadyUpdated, wrongNumber });
         })
     }
     updatedData = () => {
@@ -114,7 +122,26 @@ class ExcelUpload extends React.Component {
 
                             }
                             {
-                                this.state.found.map(val => {
+                                this.state.found.filter(val => !val.wrongNumber).map(val => {
+                                    return <tr>
+                                        <td> {val.civilIdNumber}</td>
+                                        <td> {val.phone_number}</td>
+                                    </tr>
+                                })
+                            }{
+                                this.state.found.length > 0 &&
+                                <tr>
+                                    <th>
+                                        <Button variant="contained" color="primary" onClick={this.updatedData} disabled={this.state.disableUpdate}>Update</Button>
+                                    </th>
+                                </tr>
+                            }   
+                            {
+                                this.state.alreadyUpdated.length > 0 &&
+                                <tr className="action-header"><th>Already Updated</th></tr>
+                            }
+                            {
+                                this.state.alreadyUpdated.map(val => {
                                     return <tr>
                                         <td> {val.civilIdNumber}</td>
                                         <td> {val.phone_number}</td>
@@ -122,19 +149,11 @@ class ExcelUpload extends React.Component {
                                 })
                             }
                             {
-                                this.state.found.length > 0 &&
-                                <tr>
-                                    <th>
-                                        <Button variant="contained" color="primary" onClick={this.updatedData} disabled={this.state.disableUpdate}>Update</Button>
-                                    </th>
-                                </tr>
+                                this.state.wrongNumber.length > 0 && <tr classNames="action-header"><th>Registered with Wrong Civil ID</th></tr>
+
                             }
-                            {
-                                this.state.alreadyUpdated.length > 0 &&
-                                <tr className="action-header"><th>Already Updated</th></tr>
-                            }
-                            {
-                                this.state.alreadyUpdated.map(val => {
+                            {   
+                                this.state.wrongNumber.map(val => {
                                     return <tr>
                                         <td> {val.civilIdNumber}</td>
                                         <td> {val.phone_number}</td>
@@ -156,7 +175,7 @@ class ExcelUpload extends React.Component {
                             <tr>
                                 <th>
                                     {
-                                        this.state.notFound.length > 0 && <ExportCSV csvData={this.state.notFound} fileName={'asdad'} />
+                                        this.state.notFound.length > 0 && <ExportCSV csvData={[...this.state.notFound, ...this.state.wrongNumber]} fileName={'asdad'} />
                                     }
                                 </th>
                             </tr>
