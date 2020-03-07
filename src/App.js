@@ -13,12 +13,18 @@ import store from './store/Store';
 import PrivateRoute from "./components/common/PrivateRoute";
 import Amplify from 'aws-amplify';
 import awsExports from './aws-exports';
-
+import firebase from 'firebase';
+import { FIREBASE_CONFIG } from "./config";
+import ExcelUpload from "./components/excelUpload";
 Amplify.configure(awsExports);
 
 
 
 class App extends Component {
+  componentDidMount() {
+    firebase.initializeApp(FIREBASE_CONFIG);
+   
+  }
   render() {
     console.log('layoutProps',this.props);
     return (
@@ -31,6 +37,7 @@ class App extends Component {
               <PrivateRoute exact path="/event/:id" component={Event} />
               <PrivateRoute exact path="/order/:id" component={Order} />
               <PrivateRoute exact path="/users" component={Users} />
+              <PrivateRoute exact path="/excel-upload" component={ExcelUpload} />
               <PrivateRoute exact path="/" component={Orders} />
           </div>
         </Layout>

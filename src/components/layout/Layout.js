@@ -18,8 +18,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-import {Event,SupervisedUserCircle,MoneyOutlined} from '@material-ui/icons';
-import {withRouter} from 'react-router-dom';
+import { Event, SupervisedUserCircle, MoneyOutlined, Description } from '@material-ui/icons';
+import { withRouter } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -45,8 +45,8 @@ const useStyles = makeStyles(theme => ({
   menuButton: {
     marginRight: 36,
   },
-  title:{
-    flexGrow:1
+  title: {
+    flexGrow: 1
   },
   hide: {
     display: 'none',
@@ -87,26 +87,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Layout=(props)=> {
+const Layout = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [navigation, setNavigation] = React.useState(true);
 
 
-  useEffect(()=>{
-    
-    const {state,pathname}=props.location;
-      console.log('state layout',props.location);
+  useEffect(() => {
 
-      if(pathname.startsWith('/event/') || pathname==='/login'){
-        setNavigation(false);
-        return;
-      }
-      if(pathname==='/'){
-        
-      }
-      setNavigation(true);
+    const { state, pathname } = props.location;
+    console.log('state layout', props.location);
+
+    if (pathname.startsWith('/event/') || pathname === '/login') {
+      setNavigation(false);
+      return;
+    }
+    if (pathname === '/') {
+
+    }
+    setNavigation(true);
 
   });
 
@@ -120,80 +120,80 @@ const Layout=(props)=> {
 
   return (
 
-<div className={navigation?classes.root:''}>
-      {navigation?<CssBaseline />:""}
-      {navigation?(
-      <div>
-      <AppBar
-        position="fixed"
-        style={{backgroundColor:'#001024'}}
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
-        <Toolbar>
-          {navigation?<IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: open,
+    <div className={navigation ? classes.root : ''}>
+      {navigation ? <CssBaseline /> : ""}
+      {navigation ? (
+        <div>
+          <AppBar
+            position="fixed"
+            style={{ backgroundColor: '#001024' }}
+            className={clsx(classes.appBar, {
+              [classes.appBarShift]: open,
             })}
           >
-            <MenuIcon />
-          </IconButton>:''}
-          <Typography className={classes.title} variant="h6" style={{fontFamily:'Luckiest Guy'}} noWrap>
-            Delight Control Panel
+            <Toolbar>
+              {navigation ? <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, {
+                  [classes.hide]: open,
+                })}
+              >
+                <MenuIcon />
+              </IconButton> : ''}
+              <Typography className={classes.title} variant="h6" style={{ fontFamily: 'Luckiest Guy' }} noWrap>
+                Delight Control Panel
           </Typography>
-          <SupervisedUserCircle/>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          }),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </div>
-       
-        <Divider />
-        <List>
-          {[{name:'Events',icon:<Event/>,route:'/events'},{name:'Orders',icon:<MoneyOutlined/>,route:'/'},{name:'Users',icon:<SupervisedUserCircle/>,route:'/users'}].map((item, index) => (
-            <ListItem style={props.location.pathname===item.route?{backgroundColor:'#f08c22'}:{}}  button key={index} onClick={()=>props.history.push(item.route)}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText classes={{
-                primary:props.classes.text
-              }} primary={item.name} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      </div>):''}
-      <main className={clsx({[classes.content]:navigation})}>
-        {navigation?<div className={classes.toolbar} />:''}
+              <SupervisedUserCircle />
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            variant="permanent"
+            className={clsx(classes.drawer, {
+              [classes.drawerOpen]: open,
+              [classes.drawerClose]: !open,
+            })}
+            classes={{
+              paper: clsx({
+                [classes.drawerOpen]: open,
+                [classes.drawerClose]: !open,
+              }),
+            }}
+            open={open}
+          >
+            <div className={classes.toolbar}>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </IconButton>
+            </div>
+
+            <Divider />
+            <List>
+              {[{ name: 'Events', icon: <Event />, route: '/events' }, { name: 'Orders', icon: <MoneyOutlined />, route: '/' }, { name: 'Users', icon: <SupervisedUserCircle />, route: '/users' }, { name: 'Excel Upload', icon: <Description />, route: '/excel-upload' }].map((item, index) => (
+                <ListItem style={props.location.pathname === item.route ? { backgroundColor: '#f08c22' } : {}} button key={index} onClick={() => props.history.push(item.route)}>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText classes={{
+                    primary: props.classes.text
+                  }} primary={item.name} />
+                </ListItem>
+              ))}
+            </List>
+          </Drawer>
+        </div>) : ''}
+      <main className={clsx({ [classes.content]: navigation })}>
+        {navigation ? <div className={classes.toolbar} /> : ''}
         {props.children}
       </main>
-    
+
     </div>
   );
 }
 
-const styles={
-  text:{
-    fontFamily:'Luckiest Guy'
+const styles = {
+  text: {
+    fontFamily: 'Luckiest Guy'
   }
 }
 

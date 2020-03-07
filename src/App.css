@@ -1,5 +1,11 @@
 .App {
   text-align: center;
+  
+}
+.my-custom-table {
+}
+td, tr {
+  border: 1px solid black;
 }
 
 .App-logo {
